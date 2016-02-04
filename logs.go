@@ -1,6 +1,11 @@
 package main
 
-import "time"
+import (
+	"encoding/json"
+	"reflect"
+	"strings"
+	"time"
+)
 
 type LogLevel int
 
@@ -40,6 +45,22 @@ func levelFromString(level string) (LogLevel, error) {
 	}
 
 	return Other, nil
+}
+
+// UnmarshalJSON parses a log level given as string in json
+func (l *LogLevel) UnmarshalJSON(data []byte) error {
+
+	dataString := string(data)
+	dataString = strings.Trim(dataString, "\"")
+
+	level, err := levelFromString(dataString)
+
+	if err != nil {
+		return &json.UnsupportedValueError{Value: reflect.ValueOf(data), Str: dataString}
+	}
+
+	*l = level
+	return nil
 }
 
 type LogEvent struct {

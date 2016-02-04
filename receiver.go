@@ -5,26 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"reflect"
 	"strings"
 	"time"
 )
-
-// UnmarshalJSON parses a log level given as string in json
-func (l *LogLevel) UnmarshalJSON(data []byte) error {
-
-	dataString := string(data)
-	dataString = strings.Trim(dataString, "\"")
-
-	level, err := levelFromString(dataString)
-
-	if err != nil {
-		return &json.UnsupportedValueError{Value: reflect.ValueOf(data), Str: dataString}
-	}
-
-	*l = level
-	return nil
-}
 
 func receiveLog(w http.ResponseWriter, req *http.Request) {
 	if req.Method != "POST" && req.Method != "PUT" {
