@@ -1,8 +1,6 @@
 package logs
 
 import (
-	"encoding/json"
-	"reflect"
 	"strings"
 	"time"
 )
@@ -10,7 +8,8 @@ import (
 type LogLevel int
 
 const (
-	Info LogLevel = iota
+	Verbose LogLevel = iota
+	Info
 	Warn
 	Debug
 	Error
@@ -19,6 +18,8 @@ const (
 
 func (l LogLevel) String() string {
 	switch l {
+	case Verbose:
+		return "Verbose"
 	case Info:
 		return "Info"
 	case Warn:
@@ -32,19 +33,21 @@ func (l LogLevel) String() string {
 	return "Other"
 }
 
-func levelFromString(level string) (LogLevel, error) {
+func levelFromString(level string) LogLevel {
 	switch level {
+	case "Verbose":
+		return Verbose
 	case "Info":
-		return Info, nil
+		return Info
 	case "Warn":
-		return Warn, nil
+		return Warn
 	case "Error":
-		return Error, nil
+		return Error
 	case "Debug":
-		return Debug, nil
+		return Debug
 	}
 
-	return Other, nil
+	return Other
 }
 
 // UnmarshalJSON parses a log level given as string in json
@@ -53,11 +56,7 @@ func (l *LogLevel) UnmarshalJSON(data []byte) error {
 	dataString := string(data)
 	dataString = strings.Trim(dataString, "\"")
 
-	level, err := levelFromString(dataString)
-
-	if err != nil {
-		return &json.UnsupportedValueError{Value: reflect.ValueOf(data), Str: dataString}
-	}
+	level := levelFromString(dataString)
 
 	*l = level
 	return nil
