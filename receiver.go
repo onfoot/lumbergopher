@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/onfoot/lumbergopher/logs"
 )
 
 func receiveLog(w http.ResponseWriter, req *http.Request) {
@@ -20,7 +22,7 @@ func receiveLog(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	var events LogEvents
+	var events logs.LogEvents
 	body, readErr := ioutil.ReadAll(req.Body)
 
 	if readErr != nil {
